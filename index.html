@@ -1,60 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sesame · le comptoir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sesame · le comptoir</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
+  <body>
+    <header class="site-header">
+      <p class="brand">Sesame</p>
+      <p class="brand-sub">le comptoir</p>
+    </header>
 
-<body>
+    <main class="register">
+      <div class="menu-area">
+        <!-- Le comptoir de l'IA : tout le style est prêt, il ne manque que le JavaScript -->
+        <section id="ai-counter" aria-label="L'IA du comptoir">
+          <form id="ai-order-form" class="ai-box">
+            <label for="ai-order-input"
+              >La commande, comme le client la dit</label
+            >
+            <div class="field-row">
+              <input
+                id="ai-order-input"
+                type="text"
+                autocomplete="off"
+                placeholder="deux cappu et un cookie sésame"
+              />
+              <button type="submit">Prendre la commande</button>
+            </div>
+            <p id="ai-order-message" class="ai-message"></p>
+          </form>
 
-  <header class="site-header">
-    <p class="brand">Sesame</p>
-    <p class="brand-sub">le comptoir</p>
-  </header>
+          <form id="ai-advice-form" class="ai-box">
+            <label for="ai-advice-input">L'envie du client</label>
+            <div class="field-row">
+              <input
+                id="ai-advice-input"
+                type="text"
+                autocomplete="off"
+                placeholder="un truc doux, sans café"
+              />
+              <button type="submit">Conseiller</button>
+            </div>
+            <p id="ai-advice-message" class="ai-message"></p>
+          </form>
+        </section>
 
-  <main class="register">
+        <nav id="categories" aria-label="Catégories de la carte">
+          <button type="button" value="all" class="is-active">Tout</button>
+          <button type="button" value="coffee">Cafés</button>
+          <button type="button" value="tea">Thés &amp; autres</button>
+          <button type="button" value="pastry">Pâtisseries</button>
+        </nav>
 
-    <div class="menu-area">
-
-      <!-- Le comptoir de l'IA : tout le style est prêt, il ne manque que le JavaScript -->
-      <section id="ai-counter" aria-label="L'IA du comptoir">
-
-        <form id="ai-order-form" class="ai-box">
-          <label for="ai-order-input">La commande, comme le client la dit</label>
-          <div class="field-row">
-            <input id="ai-order-input" type="text" autocomplete="off" placeholder="deux cappu et un cookie sésame">
-            <button type="submit">Prendre la commande</button>
-          </div>
-          <p id="ai-order-message" class="ai-message"></p>
-        </form>
-
-        <form id="ai-advice-form" class="ai-box">
-          <label for="ai-advice-input">L'envie du client</label>
-          <div class="field-row">
-            <input id="ai-advice-input" type="text" autocomplete="off" placeholder="un truc doux, sans café">
-            <button type="submit">Conseiller</button>
-          </div>
-          <p id="ai-advice-message" class="ai-message"></p>
-        </form>
-
-      </section>
-
-      <nav id="categories" aria-label="Catégories de la carte">
-        <button type="button" value="all" class="is-active">Tout</button>
-        <button type="button" value="coffee">Cafés</button>
-        <button type="button" value="tea">Thés &amp; autres</button>
-        <button type="button" value="pastry">Pâtisseries</button>
-      </nav>
-
-      <!--
+        <!--
         Modèle d'une carte, à recréer en JavaScript pour chaque produit :
 
         <article class="product">
@@ -69,25 +76,24 @@
 
         Produit conseillé par l'IA : la carte a en plus la classe is-suggested.
       -->
-      <section id="menu" aria-label="La carte"></section>
-    </div>
+        <section id="menu" aria-label="La carte"></section>
+      </div>
 
-    <aside id="ticket">
-      <div class="ticket-paper">
+      <aside id="ticket">
+        <div class="ticket-paper">
+          <form id="customer-form">
+            <label for="customer-name">Prénom du client</label>
+            <div class="field-row">
+              <input id="customer-name" type="text" autocomplete="off" />
+              <button type="submit">Valider</button>
+            </div>
+          </form>
+          <p id="customer-error" class="form-error"></p>
 
-        <form id="customer-form">
-          <label for="customer-name">Prénom du client</label>
-          <div class="field-row">
-            <input id="customer-name" type="text" autocomplete="off">
-            <button type="submit">Valider</button>
-          </div>
-        </form>
-        <p id="customer-error" class="form-error"></p>
+          <h2 id="ticket-title">Ticket</h2>
+          <p id="ticket-empty">Le ticket est vide.</p>
 
-        <h2 id="ticket-title">Ticket</h2>
-        <p id="ticket-empty">Le ticket est vide.</p>
-
-        <!--
+          <!--
           Modèle d'une ligne du ticket, à recréer en JavaScript :
 
           <li class="ticket-line">
@@ -97,36 +103,37 @@
             <button type="button" class="line-remove" aria-label="Retirer un Cappuccino">−</button>
           </li>
         -->
-        <ul id="ticket-lines"></ul>
+          <ul id="ticket-lines"></ul>
 
-        <form id="promo-form">
-          <label for="promo-code">Code promo</label>
-          <div class="field-row">
-            <input id="promo-code" type="text" autocomplete="off">
-            <button type="submit">Appliquer</button>
+          <form id="promo-form">
+            <label for="promo-code">Code promo</label>
+            <div class="field-row">
+              <input id="promo-code" type="text" autocomplete="off" />
+              <button type="submit">Appliquer</button>
+            </div>
+          </form>
+          <p id="promo-message"></p>
+
+          <div class="ticket-sums">
+            <p class="sum-row">
+              <span>Remise</span> <span id="ticket-discount">0,00 €</span>
+            </p>
+            <p class="sum-row sum-total">
+              <span>Total</span> <strong id="ticket-total">0,00 €</strong>
+            </p>
           </div>
-        </form>
-        <p id="promo-message"></p>
 
-        <div class="ticket-sums">
-          <p class="sum-row"><span>Remise</span> <span id="ticket-discount">0,00 €</span></p>
-          <p class="sum-row sum-total"><span>Total</span> <strong id="ticket-total">0,00 €</strong></p>
+          <button type="button" id="checkout">Encaisser</button>
         </div>
+      </aside>
+    </main>
 
-        <button type="button" id="checkout">Encaisser</button>
-
-      </div>
-    </aside>
-
-  </main>
-
-  <!-- L'ordre compte : chaque fichier utilise ce que les précédents ont défini -->
-  <script src="menu.js"></script>
-  <script src="register/order.js"></script>
-  <script src="register/menu-section.js"></script>
-  <script src="register/ticket.js"></script>
-  <script src="register/ticket-forms.js"></script>
-  <script src="script.js"></script>
-</body>
-
+    <!-- L'ordre compte : chaque fichier utilise ce que les précédents ont défini -->
+    <script src="menu.js"></script>
+    <script src="register/order.js"></script>
+    <script src="register/menu-section.js"></script>
+    <script src="register/ticket.js"></script>
+    <script src="register/ticket-forms.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
