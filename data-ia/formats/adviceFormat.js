@@ -5,6 +5,7 @@ const adviceFormat = {
       type: "array",
       items: { type: "integer" },
       maxItems: 2,
+      uniqueItems: true,
     },
     message: { type: "string" },
   },

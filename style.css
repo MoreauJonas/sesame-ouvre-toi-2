@@ -159,7 +159,9 @@ input:focus-visible {
 /* Produit conseillé par l'IA */
 .product.is-suggested {
   border-color: var(--sage);
-  box-shadow: 0 0 0 3px var(--sage), 0 6px 18px -12px rgba(46, 29, 20, 0.35);
+  box-shadow:
+    0 0 0 3px var(--sage),
+    0 6px 18px -12px rgba(46, 29, 20, 0.35);
 }
 
 .product.is-suggested::before {
@@ -175,6 +177,29 @@ input:focus-visible {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+.exterminate {
+  border-color: red !important;
+  box-shadow:
+    0 0 0 3px red,
+    0 6px 18px -12px rgba(46, 29, 20, 0.35) !important;
+}
+.product.exterminate::before {
+  content: "EXTERMINATE";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: red;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.product.exterminate {
+  text-decoration: line-through;
 }
 
 /* ---------- Catégories ---------- */
@@ -193,7 +218,9 @@ input:focus-visible {
   background: transparent;
   color: var(--roast);
   font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 #categories button:hover {
@@ -222,7 +249,9 @@ input:focus-visible {
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: 0 1px 0 var(--line), 0 6px 18px -12px rgba(46, 29, 20, 0.35);
+  box-shadow:
+    0 1px 0 var(--line),
+    0 6px 18px -12px rgba(46, 29, 20, 0.35);
   overflow: hidden;
 }
 
@@ -327,8 +356,10 @@ input:focus-visible {
   right: 0;
   height: 10px;
   background:
-    linear-gradient(-45deg, var(--paper) 5px, transparent 0) 0 0 / 10px 10px repeat-x,
-    linear-gradient(45deg, var(--paper) 5px, transparent 0) 0 0 / 10px 10px repeat-x;
+    linear-gradient(-45deg, var(--paper) 5px, transparent 0) 0 0 / 10px 10px
+      repeat-x,
+    linear-gradient(45deg, var(--paper) 5px, transparent 0) 0 0 / 10px 10px
+      repeat-x;
 }
 
 .ticket-paper::before {

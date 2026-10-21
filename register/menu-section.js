@@ -17,10 +17,13 @@ function categoryLabel(category) {
 }
 
 // Crée la carte d'un produit, sur le modèle en commentaire dans index.html
-function createProductCard(product) {
+function createProductCard(product, className = "") {
   const card = document.createElement("article");
   card.classList.add("product");
-
+  // pour intégrer une classe au card conseillé par le Model
+  if (className) {
+    card.classList.add(className);
+  }
   const categorySpan = document.createElement("span");
   categorySpan.classList.add("product-category");
   categorySpan.textContent = categoryLabel(product.category);
@@ -56,7 +59,9 @@ function createProductCard(product) {
 function renderMenu(category) {
   menuSection.textContent = "";
 
-  const products = menu.filter((product) => category === "all" || product.category === category);
+  const products = menu.filter(
+    (product) => category === "all" || product.category === category,
+  );
   products.forEach((product) => {
     menuSection.append(createProductCard(product));
   });

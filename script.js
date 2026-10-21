@@ -12,12 +12,15 @@ renderTicket();
 // L'IA du comptoir. Ton code, une section par étape.
 // ============================================================
 
-const inputOrderAi = document.querySelector("#ai-order-form");
+const formOrderAi = document.querySelector("#ai-order-form");
 const inputAi = document.querySelector("#ai-order-input");
+const formAdviceAi = document.querySelector("#ai-advice-form");
+const inputAdviceAi = document.querySelector("#ai-advice-input");
 
 // message prompt envoyé a cahque commande a Dalek
 
 function createMessages(userMessage, systemPrompt) {
+  // console.log(systemPrompt);
   return [
     {
       role: "system",
@@ -29,25 +32,98 @@ function createMessages(userMessage, systemPrompt) {
     },
   ];
 }
-
 // END message prompt envoyé a cahque commande a Dalek
-// const adviceResult = await askModel(messages, adviceFormat);
-// const messages = createMessages(
-//   `Commande du client : <demande>${adviceAI}</demande>`,
-//   `${advicePrompt}
 
-// Prénom actuel : ${JSON.stringify(order.customer)}
+formAdviceAi.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const buttonAi = document.querySelector("#ai-advice-form button");
+  const messageOrderAi = document.querySelector("#ai-advice-message");
+  const adviceAI = inputAdviceAi.value.trim();
 
-// - Si aucun nouveau prénom n'est indiqué, conserve le prénom actuel.
-// - Si aucun prénom n'est connu, retourne "customer": "".
-// `,
-// );
+  if (adviceAI === "") {
+    messageOrderAi.textContent = "Une envie d'EXTERMINAtion !?";
+    messageOrderAi.classList.add("is-error");
+    return;
+  }
+  inputAdviceAi.value = "";
 
-inputOrderAi.addEventListener("submit", async (event) => {
+  const messages = createMessages(
+    `Commande du client : <demande>${adviceAI}</demande>`,
+    `${advicePrompt}
+
+   Prénom actuel : ${JSON.stringify(order.customer)}
+
+   - Si aucun nouveau prénom n'est indiqué, conserve le prénom actuel.
+   - Si aucun prénom n'est connu, retourne "customer": "".
+   `,
+  );
+  buttonAi.disabled = true;
+  messageOrderAi.textContent = "Dalek en reflexion ...fuyez !";
+  messageOrderAi.classList.remove("is-error");
+  try {
+    // décommenter pour rendre l'IA indisponible "
+    // throw new Error("Simulation : Dalek ne répond pas");
+    const result = await askModel(messages, adviceFormat);
+
+    // vérification de la réponse du Model
+    if (!Array.isArray(result.ids)) {
+      throw new Error("Format invalide : ids doit être un tableau");
+    }
+
+    if (result.ids.length > 2) {
+      throw new Error("Format invalide : maximum 2 produits");
+    }
+
+    if (!result.ids.every((id) => Number.isInteger(id))) {
+      throw new Error("Format invalide : chaque id doit être un entier");
+    }
+
+    if (typeof result.message !== "string") {
+      throw new Error("Format invalide : message doit être une string");
+    }
+    if (result.ids.length > 0) {
+      const advisedProducts = result.ids.map((id) =>
+        menu.find((product) => product.id === id && product.available),
+      );
+
+      // Vérifier que tous les produits existent et sont disponibles
+      if (advisedProducts.some((product) => !product)) {
+        messageOrderAi.textContent =
+          "Produit conseillé inexistant ou indisponible";
+        messageOrderAi.classList.add("is-error");
+      }
+      // Afficher le conseil de Dalek
+      messageOrderAi.textContent = result.message;
+      // console.log("conseil", result);
+
+      // afficher  les cards recomamdné avec createProductCard(product)
+
+      let adviceProduct = [];
+      advisedProducts.forEach((product) => {
+        adviceProduct.push(product);
+      });
+      // console.log("adviceProduct", adviceProduct);
+      menuSection.textContent = "";
+      advisedProducts.forEach((product) => {
+        menuSection.append(createProductCard(product, "is-suggested"));
+      });
+    } else {
+      messageOrderAi.textContent = result.message;
+    }
+  } catch (error) {
+    messageOrderAi.textContent =
+      "L'IA ne répond pas : réfléchis par toi même, feignasse !";
+    messageOrderAi.classList.add("is-error");
+    console.error(error);
+  } finally {
+    buttonAi.disabled = false;
+  }
+});
+
+formOrderAi.addEventListener("submit", async (event) => {
+  event.preventDefault();
   const buttonAi = document.querySelector("#ai-order-form button");
   const messageOrderAi = document.querySelector("#ai-order-message");
-
-  event.preventDefault();
 
   const orderAI = inputAi.value.trim();
   if (orderAI === "") {
@@ -75,15 +151,14 @@ Prénom actuel : ${JSON.stringify(order.customer)}
     // décommenter pour rendre l'IA indisponible "Produit Introuvable soyez plus précis"
     // throw new Error("Simulation : Dalek ne répond pas");
     const result = await askModel(messages, orderFormat);
+    // vérification de la réponse du Model
     if (!Array.isArray(result.lines)) {
       throw new Error("Format invalide : lines doit être un tableau");
     }
-
     if (typeof result.customer !== "string") {
       throw new Error("Format invalide : customer doit être une string");
     }
-    // intégration du nom
-
+    // Intégration du nom
     if (result.customer.trim() !== "") {
       order.customer = result.customer.trim();
     }
@@ -157,28 +232,6 @@ async function askModel(messages, format = orderFormat) {
       messages: messages,
       think: false,
       stream: false,
-      // format imposé en réponse
-      // format: {
-      //   type: "object",
-      //   properties: {
-      //     lines: {
-      //       type: "array",
-      //       items: {
-      //         type: "object",
-      //         properties: {
-      //           id: { type: "integer" },
-      //           name: { type: "string" },
-      //           quantity: { type: "integer" },
-      //         },
-      //         required: ["id", "name", "quantity"],
-      //         additionalProperties: false,
-      //       },
-      //     },
-      //     customer: { type: "string" },
-      //   },
-      //   required: ["lines", "customer"],
-      //   additionalProperties: false,
-      // },
       format: format,
     }),
   });
