@@ -21,7 +21,12 @@ const order = {
       line.quantity++;
       return;
     }
-    this.lines.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
+    this.lines.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+    });
   },
 
   remove(id) {
@@ -36,7 +41,10 @@ const order = {
   },
 
   getSubtotal() {
-    return this.lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
+    return this.lines.reduce(
+      (sum, line) => sum + line.price * line.quantity,
+      0,
+    );
   },
 
   getDiscount() {
@@ -52,5 +60,5 @@ const order = {
     this.customer = "";
     this.lines = [];
     this.discountRate = 0;
-  }
+  },
 };

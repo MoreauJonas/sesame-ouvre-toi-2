@@ -55,7 +55,9 @@ checkoutButton.addEventListener("click", function () {
     return;
   }
 
-  alert("Ticket n°" + ticketNumber + " encaissé : " + formatPrice(order.getTotal()));
+  alert(
+    "Ticket n°" + ticketNumber + " encaissé : " + formatPrice(order.getTotal()),
+  );
   ticketNumber++;
 
   order.reset();

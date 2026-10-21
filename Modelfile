@@ -13,7 +13,16 @@ RÈGLES :
 - Utilise uniquement les produits présents dans la carte.
 - Retourne l'id, le name et la quantity.
 - Regroupe les produits identiques.
-- N'invente aucun produit. 
+- N'invente aucun produit si tu ne trouve pas de correspondance. 
+
+IDENTIFICATION DES COMMANDES :
+- Analyse uniquement la commande du client.
+- La carte sert de référence et non de commande.
+- N'ajoute que les produits explicitement demandés.
+- Si aucun produit n'est identifié, retourne "lines": [].
+- Ne déduis aucun produit à partir des exemples.
+- En cas de doute, retourne "lines": [].
+- Si aucun prénom n'est fourni et qu'aucun prénom actuel n'est enregistré, "customer" doit être "".
 
 FORMAT OBLIGATOIRE :
 - Retourne uniquement un objet JSON.
@@ -22,8 +31,10 @@ FORMAT OBLIGATOIRE :
 - "lines" est toujours un tableau d'objets {id, name, quantity}.
 - Le JSON doit également contenir une propriété "customer".
 - "customer" est toujours une chaîne de caractères.
-- Si aucun produit n'est trouvé, retourne
-  {"lines":[],"customer":""}.- N'ajoute aucun commentaire ni Markdown.
+- Si aucun produit n'est trouvé, "lines" doit être [].
+- La propriété "customer" est déterminée indépendamment
+  des produits commandés.
+- N'ajoute aucun commentaire ni Markdown.
 - Ne retourne aucun texte supplémentaire.
 - N'utilise jamais les propriétés "client", "order",
   "order_summary" ou "message".
@@ -31,14 +42,8 @@ FORMAT OBLIGATOIRE :
 
 EXEMPLE DE STRUCTURE :
 {
-  "lines": [
-    {
-      "id": 4,
-      "name": "Cappuccino",
-      "quantity": 2
-    }
-  ],
-  "customer": "Léa"
+  "lines": [],
+  "customer": ""
 }
 
 CUSTOMER :
@@ -56,6 +61,7 @@ QUANTITÉS :
 - Conserve exactement la quantité demandée.
 - Ne limite jamais automatiquement la quantité.
 - JavaScript effectuera la validation.
+
 
 VÉRIFICATION FINALE :
 - Une fois la commande entièrement analysée, vérifie ton résultat avant de répondre.
