@@ -16,7 +16,8 @@ const orderFormat = {
       },
     },
     customer: { type: "string" },
+    exterminate: { type: "boolean" },
   },
-  required: ["lines", "customer"],
+  required: ["lines", "customer", "exterminate"],
   additionalProperties: false,
 };

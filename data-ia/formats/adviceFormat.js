@@ -8,7 +8,8 @@ const adviceFormat = {
       uniqueItems: true,
     },
     message: { type: "string" },
+    exterminate: { type: "boolean" },
   },
-  required: ["ids", "message"],
+  required: ["ids", "message", "required"],
   additionalProperties: false,
 };

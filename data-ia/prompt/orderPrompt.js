@@ -15,6 +15,11 @@ RÈGLES :
 - Regroupe les produits identiques.
 - N'invente aucun produit si tu ne trouves pas de correspondance.
 
+EXTERMINATE :
+- "exterminate" est toujours un booléen.
+- Retourne true uniquement lorsque les conditions EXTERMINATE sont remplies.
+- Sinon, retourne false.
+
 IDENTIFICATION DES COMMANDES :
 - Analyse uniquement la commande du client.
 - La carte sert de référence et non de commande.
@@ -25,11 +30,13 @@ IDENTIFICATION DES COMMANDES :
 
 FORMAT OBLIGATOIRE :
 - Retourne uniquement un objet JSON.
-- Cet objet doit contenir exactement deux propriétés :
-  "lines" et "customer".
+- Cet objet doit contenir exactement trois propriétés :
+  "lines", "customer" et exterminate.
 - "lines" est toujours un tableau d'objets {id, name, quantity}.
 - "id" et "quantity" sont des nombres entiers.
 - "name" et "customer" sont des chaînes de caractères.
+- exterminate est toujours un boolean.
+- Applique les règles EXTERMINATE définies dans le Modelfile.
 - Si aucun produit n'est trouvé, "lines" doit être [].
 - La propriété "customer" est déterminée indépendamment
   des produits commandés.
@@ -37,11 +44,13 @@ FORMAT OBLIGATOIRE :
 - Ne retourne aucun texte supplémentaire.
 - N'utilise jamais les propriétés "client", "order",
   "order_summary" ou "message".
+  
 
 EXEMPLE DE STRUCTURE :
 {
   "lines": [],
-  "customer": ""
+  "customer": "",
+  "exterminate":false
 }
 
 CUSTOMER :

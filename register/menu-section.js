@@ -56,14 +56,14 @@ function createProductCard(product, className = "") {
 }
 
 // Vide la carte, puis la redessine : tout, ou une seule catégorie
-function renderMenu(category) {
+function renderMenu(category, className = "") {
   menuSection.textContent = "";
 
   const products = menu.filter(
     (product) => category === "all" || product.category === category,
   );
   products.forEach((product) => {
-    menuSection.append(createProductCard(product));
+    menuSection.append(createProductCard(product, className));
   });
 }
 

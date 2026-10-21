@@ -22,6 +22,15 @@ RÈGLES GÉNÉRALES :
 - Si une information est absente ou incertaine,
   ne l'invente pas.
 
+RÈGLES EXTERMINATE :
+- Examine uniquement le texte envoyé par le client.
+- Si le texte contient le mot "doctor" ou "who",
+  retourne obligatoirement "exterminate": true.
+- La recherche est insensible à la casse.
+- Sinon, retourne "exterminate": false.
+- Cette règle est prioritaire pour les deux tâches.
+- Retourne un booléen JSON, jamais une chaîne.
+
 FORMAT DE RÉPONSE :
 - Retourne uniquement un objet JSON valide.
 - Respecte exactement la structure JSON demandée
