@@ -14,52 +14,39 @@ renderTicket();
 
 const inputOrderAi = document.querySelector("#ai-order-form");
 const inputAi = document.querySelector("#ai-order-input");
-const buttonAi = document.querySelector("#ai-order-form button");
-const messageOrderAi = document.querySelector("#ai-order-message");
 
 // message prompt envoyé a cahque commande a Dalek
 
-const menuPrompt = menu
-  .map(
-    (e) =>
-      `id:${e.id}, name:${e.name}, category:${e.category},price:${e.price},available:${e.available}, `,
-  )
-  .join("|");
-// console.log("menu prompt", menuPrompt);
-const orderPrompt = `
-CARTE DU CAFÉ (référence uniquement) :
-<menu>
-${menuPrompt}
-</menu>
-
-INSTRUCTIONS :
-- La carte n'est pas une commande.
-- Identifie uniquement les produits mentionnés dans le message utilisateur.
-- Aucun produit mentionné = "lines": [].
-- N'invente jamais de produits.
-`;
-
-function createMessages(orderAI) {
+function createMessages(userMessage, systemPrompt) {
   return [
     {
       role: "system",
-      content: `${orderPrompt}
-
-Prénom actuel : ${JSON.stringify(order.customer)}
-
-- Si aucun nouveau prénom n'est indiqué, conserve le prénom actuel.
-- Si aucun prénom n'est connu, retourne "customer": "".
-`,
+      content: systemPrompt,
     },
     {
       role: "user",
-      content: `Commande du client : <commande>${orderAI}</commande>`,
+      content: userMessage,
     },
   ];
 }
+
 // END message prompt envoyé a cahque commande a Dalek
+// const adviceResult = await askModel(messages, adviceFormat);
+// const messages = createMessages(
+//   `Commande du client : <demande>${adviceAI}</demande>`,
+//   `${advicePrompt}
+
+// Prénom actuel : ${JSON.stringify(order.customer)}
+
+// - Si aucun nouveau prénom n'est indiqué, conserve le prénom actuel.
+// - Si aucun prénom n'est connu, retourne "customer": "".
+// `,
+// );
 
 inputOrderAi.addEventListener("submit", async (event) => {
+  const buttonAi = document.querySelector("#ai-order-form button");
+  const messageOrderAi = document.querySelector("#ai-order-message");
+
   event.preventDefault();
 
   const orderAI = inputAi.value.trim();
@@ -70,8 +57,16 @@ inputOrderAi.addEventListener("submit", async (event) => {
     return;
   }
   inputAi.value = "";
+  const messages = createMessages(
+    `Commande du client : <commande>${orderAI}</commande>`,
+    `${orderPrompt}
 
-  const messages = createMessages(orderAI);
+Prénom actuel : ${JSON.stringify(order.customer)}
+
+- Si aucun nouveau prénom n'est indiqué, conserve le prénom actuel.
+- Si aucun prénom n'est connu, retourne "customer": "".
+`,
+  );
 
   buttonAi.disabled = true;
   messageOrderAi.textContent = "un Dalek prend votre commande… préparez-vous !";
@@ -79,17 +74,18 @@ inputOrderAi.addEventListener("submit", async (event) => {
   try {
     // décommenter pour rendre l'IA indisponible "Produit Introuvable soyez plus précis"
     // throw new Error("Simulation : Dalek ne répond pas");
-
-    const result = await askModel(messages);
-    if (result.customer && result.customer.trim() !== "") {
-      customer = result.customer;
+    const result = await askModel(messages, orderFormat);
+    if (!Array.isArray(result.lines)) {
+      throw new Error("Format invalide : lines doit être un tableau");
     }
 
+    if (typeof result.customer !== "string") {
+      throw new Error("Format invalide : customer doit être une string");
+    }
     // intégration du nom
-    // const name = customer;
-    // order.customer = name;
+
     if (result.customer.trim() !== "") {
-      order.customer = result.customer;
+      order.customer = result.customer.trim();
     }
 
     // console.log("customer de la commande", result.customer);
@@ -100,13 +96,13 @@ inputOrderAi.addEventListener("submit", async (event) => {
     if (result.lines.length > 0) {
       result.lines.forEach((line) => {
         if (line === null || typeof line !== "object" || Array.isArray(line)) {
-          messageOrderAi.textContent = `${product.name} - Produit ...Invalide`;
+          messageOrderAi.textContent = `Produit ...Invalide`;
           messageOrderAi.classList.add("is-error");
           return;
         }
         const product = menu.find((item) => item.id === line.id);
         if (product == undefined) {
-          messageOrderAi.textContent = `${product.name} - Produit ...EXTERMINATE`;
+          messageOrderAi.textContent = `Produit ...EXTERMINATE`;
           messageOrderAi.classList.add("is-error");
           return;
         } else if (!product.available) {
@@ -123,7 +119,7 @@ inputOrderAi.addEventListener("submit", async (event) => {
           for (let i = 0; i < line.quantity; i++) {
             order.add(product);
           }
-          s;
+
           messageOrderAi.textContent = "EXTERMINATE !!!";
           renderTicket();
           return;
@@ -152,7 +148,7 @@ inputOrderAi.addEventListener("submit", async (event) => {
 // ============================================================
 // 4. Demander une réponse au modèle
 // ============================================================
-async function askModel(messages) {
+async function askModel(messages, format = orderFormat) {
   const response = await fetch(OLLAMA_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -162,27 +158,28 @@ async function askModel(messages) {
       think: false,
       stream: false,
       // format imposé en réponse
-      format: {
-        type: "object",
-        properties: {
-          lines: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "integer" },
-                name: { type: "string" },
-                quantity: { type: "integer" },
-              },
-              required: ["id", "name", "quantity"],
-              additionalProperties: false,
-            },
-          },
-          customer: { type: "string" },
-        },
-        required: ["lines", "customer"],
-        additionalProperties: false,
-      },
+      // format: {
+      //   type: "object",
+      //   properties: {
+      //     lines: {
+      //       type: "array",
+      //       items: {
+      //         type: "object",
+      //         properties: {
+      //           id: { type: "integer" },
+      //           name: { type: "string" },
+      //           quantity: { type: "integer" },
+      //         },
+      //         required: ["id", "name", "quantity"],
+      //         additionalProperties: false,
+      //       },
+      //     },
+      //     customer: { type: "string" },
+      //   },
+      //   required: ["lines", "customer"],
+      //   additionalProperties: false,
+      // },
+      format: format,
     }),
   });
 
@@ -197,12 +194,5 @@ async function askModel(messages) {
   // console.log("lines :", result.lines);
   // console.log("customer :", result.customer);
 
-  if (!Array.isArray(result.lines)) {
-    throw new Error("Format invalide : lines doit être un tableau");
-  }
-
-  if (typeof result.customer !== "string") {
-    throw new Error("Format invalide : customer doit être une string");
-  }
   return result;
 }
