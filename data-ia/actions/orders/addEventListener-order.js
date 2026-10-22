@@ -41,20 +41,17 @@ Prénom actuel : ${JSON.stringify(order.customer)}
     // décommenter pour rendre l'IA indisponible "Produit Introuvable soyez plus précis"
     // throw new Error("Simulation : Dalek ne répond pas");
     const result = await askModel(messages, orderFormat);
+    handleExterminate(
+      result.exterminate,
+      "#ai-order-form button",
+      "#ai-order-message",
+    );
 
-    if (result.exterminate) {
-      htmlResponseAi(
-        "#ai-order-form button",
-        "#ai-order-message",
-        "Doctor Who détecté ...EXTERMINATE  !!!!",
-        "is-error",
-      );
-      mainContain.classList.add("exterminate-main");
-      renderMenu("all", "exterminate");
-    } else {
+    // vérification de la réponse du Model
+
+    if (!result.exterminate) {
       mainContain.classList.remove("exterminate-main");
       renderMenu("all");
-      // vérification de la réponse du Model
 
       if (!Array.isArray(result.lines)) {
         throw new Error("Format invalide : lines doit être un tableau");
@@ -96,7 +93,6 @@ Prénom actuel : ${JSON.stringify(order.customer)}
               "Produit ...EXTERMINATE",
               "is-error",
             );
-
             return;
           } else if (!product.available) {
             htmlResponseAi(

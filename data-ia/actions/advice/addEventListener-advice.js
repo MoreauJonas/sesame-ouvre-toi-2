@@ -4,7 +4,6 @@ async function handleAdviceSubmit(event) {
   const buttonAi = document.querySelector("#ai-advice-form button");
   const messageOrderAi = document.querySelector("#ai-advice-message");
   const inputAdviceAi = document.querySelector("#ai-advice-input");
-  const mainContain = document.querySelector("main");
 
   const adviceAI = inputAdviceAi.value.trim();
 
@@ -44,19 +43,13 @@ async function handleAdviceSubmit(event) {
     // throw new Error("Simulation : Dalek ne répond pas");
     const result = await askModel(messages, adviceFormat);
 
-    if (result.exterminate) {
-      htmlResponseAi(
-        "#ai-advice-form button",
-        "#ai-advice-message",
-        "Doctor Who detecté ...EXTERMINATE !!!!",
-        "is-error",
-      );
-      mainContain.classList.add("exterminate-main");
+    handleExterminate(
+      result.exterminate,
+      "#ai-advice-form button",
+      "#ai-advice-message",
+    );
 
-      renderMenu("all", "exterminate");
-    } else {
-      mainContain.classList.remove("exterminate-main");
-      renderMenu("all");
+    if (!result.exterminate) {
       // vérification de la réponse du Model
       if (!Array.isArray(result.ids)) {
         throw new Error("Format invalide : ids doit être un tableau");
@@ -86,6 +79,7 @@ async function handleAdviceSubmit(event) {
             "Produit conseillé inexistant ou indisponible",
             "is-error",
           );
+          return;
         }
         // Afficher le conseil de Dalek
         messageOrderAi.textContent = result.message;
