@@ -1,6 +1,3 @@
-const MODEL_NAME = "dalek";
-const OLLAMA_URL = "http://localhost:11434/api/chat";
-
 // Premier affichage
 renderMenu("all");
 renderTicket();
@@ -11,13 +8,14 @@ renderTicket();
 // ============================================================
 // L'IA du comptoir. Ton code, une section par étape.
 // ============================================================
-
+const MODEL_NAME = "dalek";
+const OLLAMA_URL = "http://localhost:11434/api/chat";
 const formOrderAi = document.querySelector("#ai-order-form");
 const inputAi = document.querySelector("#ai-order-input");
 const formAdviceAi = document.querySelector("#ai-advice-form");
 const inputAdviceAi = document.querySelector("#ai-advice-input");
 
-// message prompt envoyé a cahque commande a Dalek
+// message prompt envoyé a chaque commande a Dalek
 
 function createMessages(userMessage, systemPrompt) {
   // console.log(systemPrompt);
@@ -32,8 +30,24 @@ function createMessages(userMessage, systemPrompt) {
     },
   ];
 }
-// END message prompt envoyé a cahque commande a Dalek
+function htmlResponseAi(
+  button,
+  messageContent,
+  textContent,
+  className = null,
+  buttonDisabled = false,
+) {
+  const buttonAi = document.querySelector(button);
+  const messageOrderAi = document.querySelector(messageContent);
 
+  messageOrderAi.textContent = textContent;
+  if (className) {
+    messageOrderAi.classList.toggle(className);
+  }
+  if (buttonDisabled) {
+    buttonAi.disabled = true;
+  }
+}
 // ORDERS
 formOrderAi.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -42,9 +56,13 @@ formOrderAi.addEventListener("submit", async (event) => {
 
   const orderAI = inputAi.value.trim();
   if (orderAI === "") {
-    messageOrderAi.textContent =
-      "Veuillez saisir une commande... EXTERMINATE !";
-    messageOrderAi.classList.add("is-error");
+    htmlResponseAi(
+      "#ai-order-form button",
+      "#ai-order-message",
+      "Veuillez saisir une commande... EXTERMINATE !",
+    );
+    messageOrderAi.classList.remove("is-error");
+
     return;
   }
   inputAi.value = "";
@@ -58,10 +76,17 @@ Prénom actuel : ${JSON.stringify(order.customer)}
 - Si aucun prénom n'est connu, retourne "customer": "".
 `,
   );
-
-  buttonAi.disabled = true;
-  messageOrderAi.textContent = "un Dalek prend votre commande… préparez-vous !";
+  htmlResponseAi(
+    "#ai-order-form button",
+    "#ai-order-message",
+    "un Dalek prend votre commande… préparez-vous !",
+    true,
+  );
   messageOrderAi.classList.remove("is-error");
+
+  //
+  // messageOrderAi.textContent = "un Dalek prend votre commande… préparez-vous !";
+  // messageOrderAi.classList.remove("is-error");
   try {
     // décommenter pour rendre l'IA indisponible "Produit Introuvable soyez plus précis"
     // throw new Error("Simulation : Dalek ne répond pas");
@@ -70,8 +95,13 @@ Prénom actuel : ${JSON.stringify(order.customer)}
 
     if (result.exterminate) {
       console.log("exterminate");
-      messageOrderAi.textContent = "Vous avez de la chance !!!!";
+      htmlResponseAi(
+        "#ai-order-form button",
+        "#ai-order-message",
+        "Vous avez de la chance !!!!",
+      );
       messageOrderAi.classList.remove("is-error");
+
       renderMenu("all", "exterminate");
     } else {
       console.log("veille");
@@ -100,18 +130,33 @@ Prénom actuel : ${JSON.stringify(order.customer)}
             typeof line !== "object" ||
             Array.isArray(line)
           ) {
-            messageOrderAi.textContent = `Produit ...Invalide`;
-            messageOrderAi.classList.add("is-error");
+            htmlResponseAi(
+              "#ai-order-form button",
+              "#ai-order-message",
+              "Produit ...Invalide",
+              "is-error",
+            );
+
             return;
           }
           const product = menu.find((item) => item.id === line.id);
           if (product == undefined) {
-            messageOrderAi.textContent = `Produit ...EXTERMINATE`;
-            messageOrderAi.classList.add("is-error");
+            htmlResponseAi(
+              "#ai-order-form button",
+              "#ai-order-message",
+              "Produit ...EXTERMINATE",
+              "is-error",
+            );
+
             return;
           } else if (!product.available) {
-            messageOrderAi.textContent = `${product.name} a été ...EXTERMINATE !!!  et n'est plus disponible.`;
-            messageOrderAi.classList.add("is-error");
+            htmlResponseAi(
+              "#ai-order-form button",
+              "#ai-order-message",
+              `${product.name} a été ...EXTERMINATE !!!  et n'est plus disponible.`,
+              "is-error",
+            );
+
             return;
           }
 
@@ -123,26 +168,44 @@ Prénom actuel : ${JSON.stringify(order.customer)}
             for (let i = 0; i < line.quantity; i++) {
               order.add(product);
             }
+            htmlResponseAi(
+              "#ai-order-form button",
+              "#ai-order-message",
+              "Vous avez de la chance !!!",
+            );
+            messageOrderAi.classList.remove("is-error");
 
-            messageOrderAi.textContent = "Vous avez de la chance !!!";
             renderTicket();
             return;
           } else {
-            messageOrderAi.textContent = `${line.quantity} ?? il faut revoir les quantitées, je n'ai pas de bras`;
-            messageOrderAi.classList.add("is-error");
+            htmlResponseAi(
+              "#ai-order-form button",
+              "#ai-order-message",
+              `${line.quantity} ?? il faut revoir les quantitées, je n'ai pas de bras`,
+              "is-error",
+            );
+
             return;
           }
         });
         // console.log("Ticket:", order.lines);
       } else {
-        messageOrderAi.textContent = "Produit Introuvable soyez plus précis";
-        messageOrderAi.classList.add("is-error");
+        htmlResponseAi(
+          "#ai-order-form button",
+          "#ai-order-message",
+          "Produit Introuvable soyez plus précis",
+          "is-error",
+        );
       }
     }
   } catch (error) {
-    messageOrderAi.textContent =
-      "L'IA ne répond pas : prends la commande à la main, feignasse !";
-    messageOrderAi.classList.add("is-error");
+    htmlResponseAi(
+      "#ai-order-form button",
+      "#ai-order-message",
+      "L'IA ne répond pas : prends la commande à la main, feignasse !",
+      "is-error",
+    );
+
     console.error(error);
   } finally {
     buttonAi.disabled = false;
@@ -158,8 +221,13 @@ formAdviceAi.addEventListener("submit", async (event) => {
   const adviceAI = inputAdviceAi.value.trim();
 
   if (adviceAI === "") {
-    messageOrderAi.textContent = "Une envie d'EXTERMINAtion !?";
-    messageOrderAi.classList.add("is-error");
+    htmlResponseAi(
+      "#ai-advice-form button",
+      "#ai-advice-message",
+      "Une envie d'EXTERMINAtion !?",
+    );
+    messageOrderAi.classList.remove("is-error");
+
     return;
   }
   inputAdviceAi.value = "";
@@ -174,9 +242,14 @@ formAdviceAi.addEventListener("submit", async (event) => {
    - Si aucun prénom n'est connu, retourne "customer": "".
    `,
   );
-  buttonAi.disabled = true;
-  messageOrderAi.textContent = "Dalek en reflexion ...fuyez !";
+  htmlResponseAi(
+    "#ai-advice-form button",
+    "#ai-advice-message",
+    "Dalek en reflexion ...fuyez !",
+    true,
+  );
   messageOrderAi.classList.remove("is-error");
+
   try {
     // décommenter pour rendre l'IA indisponible "
     // throw new Error("Simulation : Dalek ne répond pas");
@@ -185,8 +258,13 @@ formAdviceAi.addEventListener("submit", async (event) => {
 
     if (result.exterminate) {
       console.log("exterminate");
-      messageOrderAi.textContent = "EXTERMINATE !!!!";
-      messageOrderAi.classList.remove("is-error");
+      htmlResponseAi(
+        "#ai-advice-form button",
+        "#ai-advice-message",
+        "EXTERMINATE !!!!",
+        "is-error",
+      );
+
       renderMenu("all", "exterminate");
     } else {
       console.log("veille");
@@ -213,9 +291,12 @@ formAdviceAi.addEventListener("submit", async (event) => {
 
         // Vérifier que tous les produits existent et sont disponibles
         if (advisedProducts.some((product) => !product)) {
-          messageOrderAi.textContent =
-            "Produit conseillé inexistant ou indisponible";
-          messageOrderAi.classList.add("is-error");
+          htmlResponseAi(
+            "#ai-advice-form button",
+            "#ai-advice-message",
+            "Produit conseillé inexistant ou indisponible",
+            "is-error",
+          );
         }
         // Afficher le conseil de Dalek
         messageOrderAi.textContent = result.message;
@@ -237,9 +318,13 @@ formAdviceAi.addEventListener("submit", async (event) => {
       }
     }
   } catch (error) {
-    messageOrderAi.textContent =
-      "L'IA ne répond pas : réfléchis par toi même, feignasse !";
-    messageOrderAi.classList.add("is-error");
+    htmlResponseAi(
+      "#ai-advice-form button",
+      "#ai-advice-message",
+      "L'IA ne répond pas : réfléchis par toi même, feignasse !",
+      "is-error",
+    );
+
     console.error(error);
   } finally {
     buttonAi.disabled = false;
