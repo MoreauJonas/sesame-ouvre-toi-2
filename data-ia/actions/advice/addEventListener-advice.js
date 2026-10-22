@@ -1,22 +1,22 @@
 // ADVICE
 async function handleAdviceSubmit(event) {
   event.preventDefault();
-  const buttonAi = document.querySelector("#ai-advice-form button");
-  const messageOrderAi = document.querySelector("#ai-advice-message");
   const inputAdviceAi = document.querySelector("#ai-advice-input");
+  const buttonAi = document.querySelector("#ai-advice-form button");
+  const messageAi = document.querySelector("#ai-advice-message");
 
   const adviceAI = inputAdviceAi.value.trim();
 
-  if (adviceAI === "") {
-    htmlResponseAi(
+  if (
+    !validateAiInput(
+      adviceAI,
       "#ai-advice-form button",
       "#ai-advice-message",
-      "Une envie d'EXTERMINAtion !?",
-    );
-    messageOrderAi.classList.remove("is-error");
-
+      messageAi,
+    )
+  )
     return;
-  }
+
   inputAdviceAi.value = "";
 
   const messages = createMessages(
@@ -36,7 +36,7 @@ async function handleAdviceSubmit(event) {
     "Dalek en reflexion ...fuyez !",
     true,
   );
-  messageOrderAi.classList.remove("is-error");
+  messageAi.classList.remove("is-error");
 
   try {
     // décommenter pour rendre l'IA indisponible "
@@ -82,7 +82,7 @@ async function handleAdviceSubmit(event) {
           return;
         }
         // Afficher le conseil de Dalek
-        messageOrderAi.textContent = result.message;
+        messageAi.textContent = result.message;
         // console.log("conseil", result);
 
         // afficher  les cards recomamdné avec createProductCard(product)
@@ -97,7 +97,7 @@ async function handleAdviceSubmit(event) {
           menuSection.append(createProductCard(product, "is-suggested"));
         });
       } else {
-        messageOrderAi.textContent = result.message;
+        messageAi.textContent = result.message;
       }
     }
   } catch (error) {

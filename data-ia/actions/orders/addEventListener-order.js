@@ -1,22 +1,32 @@
 // ORDERS
 async function handleOrderSubmit(event) {
   event.preventDefault();
+  const inputAi = document.querySelector("#ai-order-input");
   const buttonAi = document.querySelector("#ai-order-form button");
   const messageOrderAi = document.querySelector("#ai-order-message");
-  const inputAi = document.querySelector("#ai-order-input");
-  const mainContain = document.querySelector("main");
 
   const orderAI = inputAi.value.trim();
-  if (orderAI === "") {
-    htmlResponseAi(
+
+  if (
+    !validateAiInput(
+      orderAI,
       "#ai-order-form button",
       "#ai-order-message",
-      "Veuillez saisir une commande... EXTERMINATE !",
-    );
-    messageOrderAi.classList.remove("is-error");
-
+      messageOrderAi,
+    )
+  )
     return;
-  }
+
+  // if (orderAI === "") {
+  //   htmlResponseAi(
+  //     "#ai-order-form button",
+  //     "#ai-order-message",
+  //     "Veuillez saisir une commande... EXTERMINATE !",
+  //   );
+  //   messageOrderAi.classList.remove("is-error");
+
+  //   return;
+  // }
   inputAi.value = "";
   const messages = createMessages(
     `Commande du client : <commande>${orderAI}</commande>`,
@@ -50,7 +60,7 @@ Prénom actuel : ${JSON.stringify(order.customer)}
     // vérification de la réponse du Model
 
     if (!result.exterminate) {
-      mainContain.classList.remove("exterminate-main");
+      // mainContain.classList.remove("exterminate-main");
       renderMenu("all");
 
       if (!Array.isArray(result.lines)) {

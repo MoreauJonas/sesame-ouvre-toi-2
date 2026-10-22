@@ -202,7 +202,35 @@ input:focus-visible {
 .product.exterminate {
   text-decoration: line-through;
 }
+/* MODAL DALEK */
+.dalek-dialog {
+  position: fixed;
+  margin: 0;
+  padding: 15px;
 
+  width: 500px;
+  max-width: 90vw;
+  max-height: 85dvh;
+  overflow-y: auto;
+
+  box-sizing: border-box;
+
+  border: 3px solid red;
+  border-radius: 10px;
+  background: black;
+  color: white;
+  text-align: center;
+}
+
+.dalek-dialog img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dalek-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.15);
+}
 /* ---------- Catégories ---------- */
 
 #categories {
